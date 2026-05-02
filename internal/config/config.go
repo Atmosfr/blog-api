@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	Port        string
-	LogLevel    string
+	LogLevel    slog.Level
 	Environment string
 	JWTSecret   string
 }
@@ -27,10 +27,29 @@ func Load() (*Config, error) {
 		slog.Warn("No .env file found, using environment variables")
 	}
 
-	return &Config{
+	cfg := &Config{
 		Port:        getEnv("PORT", "8080"),
-		LogLevel:    getEnv("LOG_LEVEL", "info"),
 		Environment: getEnv("ENVIRONMENT", "development"),
 		JWTSecret:   getEnv("JWT_SECRET", "mysecretkey"),
-	}, nil
+	}
+
+	switch getEnv("LOG_LEVEL", "info") {
+	case "debug":
+		cfg.LogLevel = slog.LevelDebug
+	case "info":
+		cfg.LogLevel = slog.LevelInfo
+	case "warn":
+		cfg.LogLevel = slog.LevelWarn
+	case "error":
+		cfg.LogLevel = slog.LevelError
+	default:
+		cfg.LogLevel = slog.LevelInfo
+	}
+
+	if cfg.JWTSecret == "" {
+		slog.Warn("JWT_SECRET is not set! Using weak default (only for development)")
+		cfg.JWTSecret = "change_this_in_production_please"
+	}
+
+	return cfg, nil
 }
