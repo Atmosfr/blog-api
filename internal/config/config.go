@@ -15,7 +15,7 @@ type Config struct {
 }
 
 func getEnv(key, defaultValue string) string {
-	if value, exists := os.LookupEnv(key); exists {
+	if value := os.Getenv(key); value != "" {
 		return value
 	}
 
@@ -30,7 +30,7 @@ func Load() (*Config, error) {
 	cfg := &Config{
 		Port:        getEnv("PORT", "8080"),
 		Environment: getEnv("ENVIRONMENT", "development"),
-		JWTSecret:   getEnv("JWT_SECRET", "mysecretkey"),
+		JWTSecret:   getEnv("JWT_SECRET", ""),
 	}
 
 	switch getEnv("LOG_LEVEL", "info") {
