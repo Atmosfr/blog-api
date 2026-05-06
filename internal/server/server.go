@@ -46,7 +46,7 @@ func (app *App) Run() error {
 
 func NewApp(config *config.Config) *App {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/health", handler.HealthHandler)
+	mux.HandleFunc("/health", handler.NewHealthHandler(config))
 
 	server := &http.Server{
 		Addr:    config.Port,
