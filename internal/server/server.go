@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/Atmosfr/blog-api/internal/config"
+	"github.com/Atmosfr/blog-api/internal/handler"
 )
 
 type App struct {
@@ -45,13 +46,15 @@ func (app *App) Run() error {
 
 func NewApp(config *config.Config) *App {
 	mux := http.NewServeMux()
+	mux.HandleFunc("/health", handler.HealthHandler)
+
 	server := &http.Server{
 		Addr:    config.Port,
 		Handler: mux,
 	}
 
 	return &App{
-		Server: server,
+		srv:    server,
 		Config: config,
 	}
 }
