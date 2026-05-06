@@ -32,6 +32,7 @@ func Load() (*Config, error) {
 		Port:        getEnv("PORT", "8080"),
 		Environment: getEnv("ENVIRONMENT", "development"),
 		JWTSecret:   getEnv("JWT_SECRET", ""),
+		Version:     getEnv("VERSION", "1.0.0"),
 	}
 
 	switch getEnv("LOG_LEVEL", "info") {
