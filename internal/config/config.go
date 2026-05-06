@@ -11,6 +11,7 @@ type Config struct {
 	Port        string
 	LogLevel    slog.Level
 	Environment string
+	Version	 string
 	JWTSecret   string
 }
 
