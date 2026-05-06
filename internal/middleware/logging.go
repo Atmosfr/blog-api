@@ -6,17 +6,13 @@ import (
 	"time"
 )
 
-type loggingResponseWriter struct {
-	http.ResponseWriter
-	statusCode int
-}
 
-func (rw *loggingResponseWriter) WriteHeader(code int) {
+func (rw *ResponseWriter) WriteHeader(code int) {
 	rw.statusCode = code
 	rw.ResponseWriter.WriteHeader(code)
 }
 
-func (rw *loggingResponseWriter) Write(b []byte) (int, error) {
+func (rw *ResponseWriter) Write(b []byte) (int, error) {
 	if rw.statusCode == 0 {
 		rw.statusCode = http.StatusOK
 	}
@@ -35,11 +31,11 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 
 		slog.Info("Incoming request", "method", r.Method, "path", r.URL.Path, "ip", r.RemoteAddr, "user_agent", user_agent)
 
-		lrw := &loggingResponseWriter{ResponseWriter: w, statusCode: http.StatusOK}
+		rw := &ResponseWriter{ResponseWriter: w, statusCode: http.StatusOK}
 
-		next.ServeHTTP(lrw, r)
+		next.ServeHTTP(rw, r)
 		
 		duration_ms := time.Since(start).Milliseconds()
-		slog.Info("Request completed", "method", r.Method, "status", lrw.statusCode, "path", r.URL.Path, "ip", r.RemoteAddr, "duration_ms", duration_ms, "user_agent", user_agent)
+		slog.Info("Request completed", "method", r.Method, "status", rw.statusCode, "path", r.URL.Path, "ip", r.RemoteAddr, "duration_ms", duration_ms, "user_agent", user_agent)
 	})
 }
