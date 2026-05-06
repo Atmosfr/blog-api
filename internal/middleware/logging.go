@@ -26,13 +26,20 @@ func (rw *loggingResponseWriter) Write(b []byte) (int, error) {
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		slog.Info("Incoming request", "method", r.Method, "path", r.URL.Path, "ip", r.RemoteAddr)
-		
+
+		user_agent := r.Header.Get("User-Agent")
+
+		if len(user_agent) > 200 {
+			user_agent = user_agent[:200] + "..."
+		}
+
+		slog.Info("Incoming request", "method", r.Method, "path", r.URL.Path, "ip", r.RemoteAddr, "user_agent", user_agent)
+
 		lrw := &loggingResponseWriter{ResponseWriter: w, statusCode: http.StatusOK}
 
 		next.ServeHTTP(lrw, r)
 		
 		duration_ms := time.Since(start).Milliseconds()
-		slog.Info("Request completed", "method", r.Method, "status", lrw.statusCode, "path", r.URL.Path, "ip", r.RemoteAddr, "duration_ms", duration_ms)
+		slog.Info("Request completed", "method", r.Method, "status", lrw.statusCode, "path", r.URL.Path, "ip", r.RemoteAddr, "duration_ms", duration_ms, "user_agent", user_agent)
 	})
 }
