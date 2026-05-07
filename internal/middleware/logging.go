@@ -6,19 +6,6 @@ import (
 	"time"
 )
 
-
-func (rw *ResponseWriter) WriteHeader(code int) {
-	rw.statusCode = code
-	rw.ResponseWriter.WriteHeader(code)
-}
-
-func (rw *ResponseWriter) Write(b []byte) (int, error) {
-	if rw.statusCode == 0 {
-		rw.statusCode = http.StatusOK
-	}
-	return rw.ResponseWriter.Write(b)
-}
-
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
