@@ -49,8 +49,12 @@ func NewApp(config *config.Config) *App {
 	mux.HandleFunc("/health", handler.NewHealthHandler(config))
 
 	server := &http.Server{
-		Addr:    ":" + config.Port,
-		Handler: mux,
+		Addr:              ":" + config.Port,
+		Handler:           mux,
+		ReadTimeout:       10 * time.Second,
+		ReadHeaderTimeout: 3 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       60 * time.Second,
 	}
 
 	return &App{
