@@ -49,7 +49,7 @@ func NewApp(config *config.Config) *App {
 	mux.HandleFunc("/health", handler.NewHealthHandler(config))
 
 	server := &http.Server{
-		Addr:    config.Port,
+		Addr:    ":" + config.Port,
 		Handler: mux,
 	}
 
