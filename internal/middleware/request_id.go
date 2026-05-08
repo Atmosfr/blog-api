@@ -19,7 +19,7 @@ func GetRequestID(ctx context.Context) string {
 	return ""
 }
 
-func RequestIdMiddleware(next http.Handler) http.Handler {
+func RequestIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestID := r.Header.Get("X-Request-ID")
 		if requestID == "" {
