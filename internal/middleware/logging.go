@@ -17,6 +17,10 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(rw, r)
 
 		durationMS := time.Since(start).Milliseconds()
+
+		if rw.statusCode == 0 {
+			rw.statusCode = http.StatusOK
+		}
 		slog.Info("Request completed", "request_id", requestID, "method", r.Method, "status", rw.statusCode, "path", r.URL.Path, "ip", r.RemoteAddr, "duration_ms", durationMS)
 	})
 }
